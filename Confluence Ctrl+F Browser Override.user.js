@@ -3,6 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      2.2
 // @description  Force browser find instead of Confluence find/replace in edit mode, with compact toggle button
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Confluence%20Ctrl+F%20Browser%20Override.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Confluence%20Ctrl+F%20Browser%20Override.user.js
+// @icon         https://cdn.iconscout.com/icon/free/png-128/confluence-3628704-3029929.png
 // @author       Robert
 // @match        https://*.atlassian.net/wiki/*
 // @grant        none
