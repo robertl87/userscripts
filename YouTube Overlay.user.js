@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         YouTube Overlay
 // @namespace    yt-overlay
-// @version      1.7.1
-// @updateURL    https://robertlindeboom.nl/werk/Youtube-overlay.user.js
-// @downloadURL  https://robertlindeboom.nl/werk/Youtube-overlay.user.js
+// @version      1.7.2
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
 // @description  MTV-style overlay for YouTube with a continuous ticker and logo images.
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @match        https://www.youtube.com/*
 // @match        https://music.youtube.com/*
 // @run-at       document-idle
