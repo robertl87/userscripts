@@ -3,7 +3,7 @@
 // @namespace    https://your-namespace.example
 // @version      2.0
 // @description  Detecteer Monday/Maandag vandaag en highlight de volledige week + matrix, zonder :has().
-// @match        https://81635.afasinsite.nl/aanpassen-mijn-uren-per-week-matrix-prs/topicus-l-uren-boeken-per-week-insite-matrix*
+// @match        https://*.afasinsite.nl/*
 // @grant        GM_addStyle
 // @run-at       document-idle
 // ==/UserScript==
