@@ -1,8 +1,11 @@
 // ==UserScript==
 // @name         Jira Backlog Search Fix
 // @namespace    http://tampermonkey.net/
-// @version      2025-11-10
+// @version      1.3
 // @description  Zorgt dat Ctrl+F direct werkt in Jira backlog zonder eerst te scrollen, met visuele melding.
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira%20Backlog%20Search%20Fix.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira%20Backlog%20Search%20Fix.user.js
+// @icon         https://www.pngall.com/wp-content/uploads/15/Jira-Logo-Transparent-180x180.png
 // @author       Robert
 // @match        https://*.atlassian.net/jira/software/c/projects/*/boards/*/backlog*
 // @grant        none
