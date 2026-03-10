@@ -1,8 +1,12 @@
 // ==UserScript==
-// @name         AFAS InSite - Highlight volledige week (NL/EN Monday support, Firefox compatible)
+// @name         AFAS InSite - Highlight Monday
 // @namespace    https://your-namespace.example
 // @version      2.0
-// @description  Detecteer Monday/Maandag vandaag en highlight de volledige week + matrix, zonder :has().
+// @description  Detecteer Monday/Maandag vandaag en highlight de volledige week + matrix, FF compatibl
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=afas.nl
+// @author       Robert
 // @match        https://*.afasinsite.nl/*
 // @grant        GM_addStyle
 // @run-at       document-idle
