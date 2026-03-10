@@ -1,11 +1,13 @@
 // ==UserScript==
 // @name         Atlassian auto click Doorgaan button
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Klik automatisch op de "Doorgaan" knop op de Atlassian login pagina
-// @author       ChatGPT
-// @match        https://id.atlassian.com/login?continue*
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Atlassian%20auto%20click%20Doorgaan%20button.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Atlassian%20auto%20click%20Doorgaan%20button.user.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=atlassian.com
+// @author       Robert
+// @match        https://id.atlassian.com/login?continue*
 // @grant        none
 // ==/UserScript==
 
