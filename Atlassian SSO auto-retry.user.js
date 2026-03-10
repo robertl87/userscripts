@@ -1,8 +1,12 @@
 // ==UserScript==
 // @name         Atlassian SSO auto-retry
 // @namespace    tf-atlassian-sso
-// @version      30-01-2026
+// @version      1.1
 // @description  SSO-(her)start en keer terug naar gevraagde pagina bij Atlassian Jira Cloud (multi-tenant)
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Atlassian%20SSO%20auto-retry.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Atlassian%20SSO%20auto-retry.user.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=atlassian.net
+// @author       Robert
 // @match        https://*.atlassian.net/issues*
 // @match        https://*.atlassian.net/jira/*
 // @run-at       document-start
