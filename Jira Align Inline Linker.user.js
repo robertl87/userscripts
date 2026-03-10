@@ -3,6 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      2026-02-02
 // @description  Voeg een subtiele link achter Align ID in Jira Cloud
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira%20Align%20Inline%20Linker.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira%20Align%20Inline%20Linker.user.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=jiraalign.com
 // @author       Robert
 // @match        https://topicusfinance.atlassian.net/*
 // @grant        none
