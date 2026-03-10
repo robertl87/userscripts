@@ -3,6 +3,9 @@
 // @namespace    http://tampermonkey.net/
 // @version      0.1
 // @description  Redirect specific domain links to Archive.is
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Newspaper%20paywall%20to%20Archive.is.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Newspaper%20paywall%20to%20Archive.is.user.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=dpgmediagroup.com
 // @author       Robert
 // @include      *://*.ad.nl/*
 // @include      *://*.tubantia.nl/*
