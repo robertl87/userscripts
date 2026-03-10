@@ -2,8 +2,11 @@
 // @name         JIRA | Auto Save description on leave
 // @version      2025-09-30
 // @description  try to take over the world!
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/JIRA%20-%20Auto%20Save%20description%20on%20leave.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/JIRA%20-%20Auto%20Save%20description%20on%20leave.user.js
+// @icon         https://www.pngall.com/wp-content/uploads/15/Jira-Logo-Transparent-180x180.png
 // @author       Martijn Heuvelink
-// @match        https://*.atlassian.net/browse/*
+// @match        https://topicusfinance.atlassian.net/browse/*
 // @grant        none
 // ==/UserScript==
 
