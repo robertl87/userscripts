@@ -1,15 +1,19 @@
 // ==UserScript==
 // @name         YouTube Overlay
 // @namespace    yt-overlay
-// @version      1.7.2
+// @version      1.7.4
 // @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
 // @description  MTV-style overlay for YouTube with a continuous ticker and logo images.
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
 // @match        https://www.youtube.com/*
 // @match        https://music.youtube.com/*
+// @match        https://nestkastlive.nl/*
 // @run-at       document-idle
 // @grant        GM_xmlhttpRequest
+// @grant        GM_registerMenuCommand
+// @grant        GM_getValue
+// @grant        GM_setValue
 // ==/UserScript==
 
 (function () {
@@ -45,7 +49,7 @@
     clockPrefix: "⏰",
 
     nowLabel: "PLAYING",
-    showNowPlaying: false,
+    showNowPlaying: true,
     artistFontWeight: 800,
     artistFontSize: "18px",
     titleFontWeight: 600,
@@ -61,6 +65,31 @@
     nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-DJ.png",
     nowPlayingImgSize: 128,
     nowPlayingImgOpacity: 0.95,
+
+    // Per-device image profiles. Choose one locally via userscript menu.
+    imageProfiles: {
+      topitv: {
+        logoUrl: "https://robertlindeboom.nl/werk/Topi/Topi-MTV.png",
+        nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-DJ.png",
+      },
+      mtv: {
+        logoUrl: "https://logos-world.net/wp-content/uploads/2020/09/MTV-Emblem.png",
+        nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-DJ.png",
+      },
+      uil: {
+        logoUrl: "https://robertlindeboom.nl/werk/Topi/Topi-nest.png",
+        nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-metUil.png",
+      },
+      trein: {
+        logoUrl: "https://robertlindeboom.nl/werk/Topi/Topi-treintje.png",
+        nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-conducteur.png",
+      },
+      noimages: {
+        logoUrl: "",
+        nowPlayingImgUrl: "",
+      },
+    },
+    defaultImageProfile: "topitv",
 
     bottomPadding: 10,
     leftPadding: 16,
@@ -88,6 +117,83 @@
   let currentArtist = "";
   let currentTitle  = "";
   let lastRefreshSuccess = 0;
+  const IMAGE_PROFILE_STORAGE_KEY = "overlayImageProfile";
+
+  function storageGet(key, fallback = "") {
+    try {
+      if (typeof GM_getValue === "function") return GM_getValue(key, fallback);
+    } catch {}
+    try {
+      return localStorage.getItem(key) || fallback;
+    } catch {}
+    return fallback;
+  }
+
+  function storageSet(key, value) {
+    try {
+      if (typeof GM_setValue === "function") {
+        GM_setValue(key, value);
+        return;
+      }
+    } catch {}
+    try {
+      localStorage.setItem(key, value);
+    } catch {}
+  }
+
+  function getProfileNames() {
+    return Object.keys(CONFIG.imageProfiles || {});
+  }
+
+  function getSelectedProfileName() {
+    const names = getProfileNames();
+    const fallback = CONFIG.defaultImageProfile;
+    const stored = String(storageGet(IMAGE_PROFILE_STORAGE_KEY, fallback) || "").trim();
+    if (names.includes(stored)) return stored;
+    if (names.includes(fallback)) return fallback;
+    return names[0] || "";
+  }
+
+  function applyImageProfile() {
+    const selected = getSelectedProfileName();
+    const profile = CONFIG.imageProfiles?.[selected];
+    if (!profile) return;
+
+    if (typeof profile.logoUrl === "string") CONFIG.logoUrl = profile.logoUrl;
+    if (typeof profile.nowPlayingImgUrl === "string") CONFIG.nowPlayingImgUrl = profile.nowPlayingImgUrl;
+  }
+
+  function registerProfileMenu() {
+    if (typeof GM_registerMenuCommand !== "function") return;
+
+    GM_registerMenuCommand("Kies overlay-profiel", () => {
+      const names = getProfileNames();
+      if (!names.length) return;
+
+      const current = getSelectedProfileName();
+      const input = prompt(
+        `Beschikbare profielen: ${names.join(", ")}\nHuidig profiel: ${current}\nVul profielnaam in:`,
+        current
+      );
+      if (!input) return;
+
+      const next = input.trim();
+      if (!names.includes(next)) {
+        alert(`Onbekend profiel: ${next}`);
+        return;
+      }
+
+      storageSet(IMAGE_PROFILE_STORAGE_KEY, next);
+      applyImageProfile();
+      destroyUI();
+      refreshOverlay();
+      alert(`Overlay-profiel ingesteld op: ${next}`);
+    });
+
+    GM_registerMenuCommand("Toon overlay-profiel", () => {
+      alert(`Actief overlay-profiel: ${getSelectedProfileName()}`);
+    });
+  }
 
   // ---------- REMOTE HEADLINES ----------
   function fetchHeadlinesFromServer() {
@@ -128,10 +234,29 @@
 
   // ---------- Helpers ----------
   const qs = (sel, root=document) => root.querySelector(sel);
+  const isYouTubeMusicHost = () => /(^|\.)music\.youtube\.com$/i.test(location.hostname);
+  const isNestkastHost = () => /(^|\.)nestkastlive\.nl$/i.test(location.hostname);
+  const isVideoJsFullscreen = () => !!document.querySelector(".vjs-fullscreen");
   const isFullscreen = () => !!document.fullscreenElement;
+  const shouldRenderNowPlaying = () => CONFIG.showNowPlaying && isYouTubeMusicHost();
+
+  function getOverlayParent() {
+    const fsEl = document.fullscreenElement;
+    if (fsEl instanceof HTMLElement && fsEl.tagName !== "VIDEO") return fsEl;
+    return document.body;
+  }
+
+  function attachRootToActiveParent() {
+    if (!ui.root) return;
+    const targetParent = getOverlayParent();
+    if (ui.root.parentElement !== targetParent) {
+      targetParent.appendChild(ui.root);
+    }
+  }
 
   function shouldShowOverlay() {
-    return isFullscreen();
+    if (isNestkastHost()) return isFullscreen() || isVideoJsFullscreen();
+    return isFullscreen() || isVideoJsFullscreen();
   }
 
   function formatLocalTime() {
@@ -271,7 +396,7 @@
     }
 
     // ==== NOW PLAYING IMAGE ====
-    if (CONFIG.logoUrl) {
+    if (CONFIG.nowPlayingImgUrl) {
       const npimg = document.createElement("img");
       npimg.src = CONFIG.nowPlayingImgUrl;
       Object.assign(npimg.style, {
@@ -288,7 +413,7 @@
     }
 
     // ==== NOW PLAYING ====
-    if (CONFIG.showNowPlaying) {
+    if (shouldRenderNowPlaying()) {
       const wrap = document.createElement("div");
       Object.assign(wrap.style, {
         position: "fixed",
@@ -424,7 +549,10 @@
 
   // ---------- Lifecycle ----------
   function refreshOverlay() {
-    if (shouldShowOverlay()) buildUI();
+    if (shouldShowOverlay()) {
+      buildUI();
+      attachRootToActiveParent();
+    }
     else destroyUI();
   }
 
@@ -435,8 +563,12 @@
   }
 
   document.addEventListener("fullscreenchange", refreshOverlay);
+  document.addEventListener("webkitfullscreenchange", refreshOverlay);
+  document.addEventListener("mozfullscreenchange", refreshOverlay);
+  document.addEventListener("MSFullscreenChange", refreshOverlay);
   new MutationObserver(getNowPlaying).observe(document.documentElement, { childList:true, subtree:true });
   setInterval(getNowPlaying, 1000);
+  setInterval(refreshOverlay, 1000);
 
   // ---- Regelmatige headline-refresh onafhankelijk van scroll ----
   setInterval(async () => {
@@ -464,5 +596,7 @@
       }
   }, 20000);
 
+  applyImageProfile();
+  registerProfileMenu();
   refreshOverlay();
 })();
