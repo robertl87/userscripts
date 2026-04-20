@@ -2,6 +2,10 @@
 // @name         Confluence Table to Excel
 // @namespace    https://atlassian.net
 // @version      1.4
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/confluence-table-to-excel.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/confluence-table-to-excel.user.js
+// @author       Robert
+// @icon         https://www.atlassian.com/favicon.ico
 // @description  Export all tables on a Confluence page to an Excel file
 // @match        https://*.atlassian.net/wiki/*
 // @grant        none
