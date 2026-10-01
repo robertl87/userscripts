@@ -84,6 +84,10 @@
         logoUrl: "https://robertlindeboom.nl/werk/Topi/Topi-treintje.png",
         nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-conducteur.png",
       },
+      huisdieren: {
+        logoUrl: "https://robertlindeboom.nl/werk/Topi/Topi-Hondje.png",
+        nowPlayingImgUrl: "https://robertlindeboom.nl/werk/Topi/Topi-Katdoos.png",
+      },
       noimages: {
         logoUrl: "",
         nowPlayingImgUrl: "",
