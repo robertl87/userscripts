@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Overlay
 // @namespace    yt-overlay
-// @version      1.7.4
+// @version      1.7.5
 // @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/YouTube%20Overlay.user.js
 // @description  MTV-style overlay for YouTube with a continuous ticker and logo images.
