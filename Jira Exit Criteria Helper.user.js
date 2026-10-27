@@ -3,8 +3,8 @@
 // @namespace    Jira
 // @version      1.0
 // @description  Exit criteria per workflowkolom
-// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/
-// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira Exit Criteria Helper.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/Jira Exit Criteria Helper.user.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=afas.nl
 // @author       Robert
 // @match        https://*.atlassian.net/jira/software/c/projects/*
