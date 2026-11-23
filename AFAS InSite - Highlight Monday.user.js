@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AFAS InSite - Highlight Monday
 // @namespace    https://your-namespace.example
-// @version      2.0
-// @description  Detecteer Monday/Maandag vandaag en highlight de volledige week + matrix, FF compatibl
+// @version      2.1
+// @description  Detecteer maandag vandaag en highlight de week + matrix
 // @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=afas.nl
@@ -26,55 +26,39 @@
       color: red !important;
     }
 
+    .matrix-component.highlight-week .matrix-component-header .matrix-cell-component-column-title .calendar-header-day-title span {
+      color: red !important;
+    }
+
     .matrix-component.highlight-week .valuecontrol input {
       background-color: #ff000040 !important;
     }
   `);
 
   function updateWeekHighlight() {
-    // Zoek de geselecteerde dag
-    const today = document.querySelector(".day.is-selected.is-today");
+    const matrix = document.querySelector(".matrix-component");
+    const today =
+      matrix?.querySelector(".calendar-header-day-title .title__day-name.is-today") ||
+      document.querySelector(".day.is-selected.is-today");
     if (!today) return clearAll();
 
-    const aria = today.getAttribute("aria-label") || "";
-
-    // Ondersteunt zowel NL als EN dagnaam
-    const matchesMonday =
-      aria.includes("Maandag") || aria.includes("Monday");
+    const dayName = today.matches(".title__day-name")
+      ? today.textContent || ""
+      : today.getAttribute("aria-label") || "";
+    const matchesMonday = /maandag|monday/i.test(dayName);
 
     if (!matchesMonday) return clearAll(); // Vandaag is niet maandag → niks highlighten
 
-    // De week-row waarop de dag staat
     const weekRow = today.closest(".week");
-    if (!weekRow) return clearAll();
-
-    // Highlight de week
     document.querySelectorAll(".week.highlight-week")
       .forEach(el => el.classList.remove("highlight-week"));
 
-    weekRow.classList.add("highlight-week");
+    if (weekRow) weekRow.classList.add("highlight-week");
 
-    // Highlight de passende matrix-component
-    highlightMatrix();
-  }
-
-  function highlightMatrix() {
-    // Alle matrix componenten eerst cleanen
     document.querySelectorAll(".matrix-component.highlight-week")
       .forEach(el => el.classList.remove("highlight-week"));
 
-    // Zoek de panel-structuur waarin vandaag staat
-    const sidePanel = document.querySelector(".webGrid-side-panel");
-    if (!sidePanel) return;
-
-    const today = sidePanel.querySelector(".day.is-selected.is-today");
-    if (!today) return;
-
-    // De matrix-component staat er vlak voor
-    const matrix = sidePanel.previousElementSibling;
-    if (!matrix || !matrix.classList.contains("matrix-component")) return;
-
-    matrix.classList.add("highlight-week");
+    if (matrix) matrix.classList.add("highlight-week");
   }
 
   function clearAll() {
@@ -87,5 +71,10 @@
 
   // Observer houdt dynamische updates bij
   const obs = new MutationObserver(updateWeekHighlight);
-  obs.observe(document.body, { childList: true, subtree: true });
+  obs.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ["selected-date"],
+  });
 })();
