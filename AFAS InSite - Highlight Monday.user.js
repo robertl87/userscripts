@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AFAS InSite - Highlight Monday
 // @namespace    https://your-namespace.example
-// @version      2.1
+// @version      2.2
 // @description  Detecteer maandag vandaag en highlight de week + matrix
 // @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Highlight%20Monday.user.js
@@ -14,6 +14,21 @@
 
 (function () {
   'use strict';
+
+  const datepickerStyles = new CSSStyleSheet();
+  const selectedMondayWeek =
+    ':host([selection-mode="week"]) .week[aria-selected="true"]:has(.day.is-today:is([aria-label^="Maandag," i], [aria-label^="Monday," i]))';
+  datepickerStyles.replaceSync(`
+    ${selectedMondayWeek},
+    ${selectedMondayWeek} > .tile {
+      background-color: red !important;
+      color: white !important;
+    }
+
+    ${selectedMondayWeek} .day-number {
+      color: white !important;
+    }
+  `);
 
   GM_addStyle(`
     /* Highlight volledige week in de kalender */
@@ -36,6 +51,13 @@
   `);
 
   function updateWeekHighlight() {
+    document.querySelectorAll("afas-datepicker").forEach(picker => {
+      const root = picker.shadowRoot;
+      if (root && !root.adoptedStyleSheets.includes(datepickerStyles)) {
+        root.adoptedStyleSheets = [...root.adoptedStyleSheets, datepickerStyles];
+      }
+    });
+
     const matrix = document.querySelector(".matrix-component");
     const today =
       matrix?.querySelector(".calendar-header-day-title .title__day-name.is-today") ||
@@ -68,6 +90,7 @@
 
   // Eerste check
   updateWeekHighlight();
+  customElements.whenDefined("afas-datepicker").then(updateWeekHighlight);
 
   // Observer houdt dynamische updates bij
   const obs = new MutationObserver(updateWeekHighlight);
