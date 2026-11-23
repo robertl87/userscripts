@@ -1,0 +1,107 @@
+// ==UserScript==
+// @name         AFAS InSite - Matrix usability
+// @namespace    https://your-namespace.example
+// @version      1.1
+// @description  Maak invulbare urencellen herkenbaar en highlight rij en kolom bij hover
+// @updateURL    https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Matrix%20usability.user.js
+// @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20InSite%20-%20Matrix%20usability.user.js
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=afas.nl
+// @author       Robert
+// @match        https://*.afasinsite.nl/*
+// @grant        GM_addStyle
+// @run-at       document-idle
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  const matrixSelector = ".webGrid-implementation-pt-rea-matrix .matrix-component";
+  const inputSelector =
+    '.valuecontrol input:enabled:not([readonly]):not([aria-disabled="true"]):not([aria-readonly="true"]):not([type="hidden"])';
+  const editableCellSelector =
+    `${matrixSelector} .nested-matrix-row-component-level-last > .matrix-cell-component:has(${inputSelector})`;
+  const readOnlyCellSelector =
+    `${matrixSelector} .matrix-component-body .matrix-row-component > .matrix-cell-component:not([data-cell-key="TypeOfWorkTitleCell"]):not(:has(${inputSelector}))`;
+
+  GM_addStyle(`
+    :where(${editableCellSelector}) {
+      background-color: rgba(35, 91, 168, 0.06) !important;
+      border: 1px solid rgba(35, 91, 168, 0.20) !important;
+    }
+
+    /* Lage specificiteit houdt o.a. de bestaande maandagmarkering intact. */
+    :where(${editableCellSelector}) :where(${inputSelector}) {
+      background-color: rgba(35, 91, 168, 0.06) !important;
+    }
+
+    ${readOnlyCellSelector},
+    :is(${readOnlyCellSelector}) :is(.aggregation-component, .valuecontrol, .valuecontrol input) {
+      border-color: transparent !important;
+      box-shadow: none !important;
+      cursor: default !important;
+    }
+
+    :is(${readOnlyCellSelector}) :is(.aggregation-component, .valuecontrol, .valuecontrol input) {
+      background-color: transparent !important;
+    }
+
+    ${matrixSelector} .afas-hover-row > .matrix-cell-component,
+    ${matrixSelector} .matrix-cell-component.afas-hover-column {
+      background-image: linear-gradient(rgba(214, 153, 42, 0.08), rgba(214, 153, 42, 0.08)) !important;
+    }
+
+    ${matrixSelector} .afas-hover-row > .matrix-cell-component.afas-hover-column {
+      background-image: linear-gradient(rgba(214, 153, 42, 0.14), rgba(214, 153, 42, 0.14)) !important;
+    }
+  `);
+
+  let hoveredCell = null;
+  let hoveredRow = null;
+  let hoveredMatrix = null;
+  let columnCells = [];
+
+  function clearHover() {
+    if (hoveredRow) hoveredRow.classList.remove("afas-hover-row");
+    columnCells.forEach(cell => cell.classList.remove("afas-hover-column"));
+    hoveredCell = null;
+    hoveredRow = null;
+    hoveredMatrix = null;
+    columnCells = [];
+  }
+
+  document.addEventListener("pointermove", event => {
+    const target = event.target;
+    const cell = target instanceof Element
+      ? target.closest(".matrix-cell-component")
+      : null;
+    const matrix = cell?.closest(matrixSelector);
+
+    if (!matrix) return clearHover();
+    if (cell === hoveredCell) return;
+
+    clearHover();
+    hoveredCell = cell;
+    hoveredMatrix = matrix;
+    hoveredRow = cell.closest(".matrix-row-component");
+    if (hoveredRow) hoveredRow.classList.add("afas-hover-row");
+
+    const columnKey = cell.dataset.cellKeys || cell.dataset.cellKey || "";
+    if (!/^\d{4}-\d{2}-\d{2}T/.test(columnKey)) return;
+
+    columnCells = Array.from(matrix.querySelectorAll(".matrix-cell-component"))
+      .filter(candidate =>
+        candidate.dataset.cellKey === columnKey ||
+        candidate.dataset.cellKeys === columnKey
+      );
+    columnCells.forEach(candidate => candidate.classList.add("afas-hover-column"));
+  }, { passive: true });
+
+  document.addEventListener("pointerout", event => {
+    if (hoveredMatrix && (
+      !(event.relatedTarget instanceof Node) ||
+      !hoveredMatrix.contains(event.relatedTarget)
+    )) clearHover();
+  }, { passive: true });
+
+  window.addEventListener("blur", clearHover);
+})();
