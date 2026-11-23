@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AFAS Matrix Sticky Header
 // @namespace    afas-matrix
-// @version      1.6
-// @description  Fix the days of week above the matrix and add lines next to the columns.
+// @version      1.7
+// @description  Fix the days of week above the matrix and add lines next to the columns. Depricated as of November 2026.
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20Matrix%20Sticky%20Header.user.js
 // @downloadURL  https://github.com/robertl87/userscripts/raw/refs/heads/main/AFAS%20Matrix%20Sticky%20Header.user.js
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=afas.nl
